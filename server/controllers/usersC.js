@@ -8,7 +8,7 @@ require('dotenv').config();
 const { SECRET_KEY, SALT_ROUNDS } = process.env;
 
 const ValidateEmail = zod.string().email();
-const ValidatePassword = zod.string().min
+const ValidatePassword = zod.string()
 
 
 const login = async (req,res) => {
@@ -33,21 +33,17 @@ const signup = async (req,res) => {
   try{
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
-  console.log(user)
   if (user) {
-    return res.status(409).send({ message: 'User already exists' });
+    return res.status(403).json({ message: 'User already exists' });
   }
-  console.log("here")
   const check = ValidateEmail.safeParse(email);
-  console.log(check)
   if(check.success){
       // const salt = await bcrypt.genSalt(Number(SALT));
       const hashedPassword = await bcrypt.hash(password, Number(SALT_ROUNDS));
       const newUser = await new User({ ...req.body, password: hashedPassword }).save();
 
       const token = jwt.sign({ id: newUser._id }, SECRET_KEY, { expiresIn: '7d' });
-      console.log(token)
-      res.status(201).send({ user: newUser, token });
+      res.status(201).json({ success: true ,message: "Signed Up successfully. Please Log In now!!" ,user: newUser, token });
   } 
   else {
       res.status(400).json({
