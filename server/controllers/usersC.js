@@ -20,10 +20,10 @@ const login = async (req,res) => {
     };
     const isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) {
-      return res.status(401).send({message: 'invalid password' })
+      return res.status(401).send({message: 'Invalid password' })
     }
     const token = jwt.sign({id: user._id}, SECRET_KEY, { expiresIn: "7d" });
-    res.status(200).json({ token });
+    res.status(200).json({ status: true, message: 'Login Successfull' ,token });
   } catch(error) {
     return res.status(500).send({message: "Internal Server Error"});
   }
@@ -61,6 +61,7 @@ const signup = async (req,res) => {
 
 function authenticateJWT (req, res, next) {
   const token = req.headers.authorization;
+  console.log(token)
   if (!token) {
       return res.status(401).json({ message: 'Authentication failed: No token provided.' });
   }
@@ -76,8 +77,10 @@ function authenticateJWT (req, res, next) {
               next();
           })
           .catch(() => {
-              return res.status(500).json({ message: 'Internal Server Error' });
+              return res.status(500).json({ message: 'Internal Server Error', status: false });
           });
+      // User.findById({id: decoded.id})
+
   });
 }
 
@@ -85,7 +88,7 @@ const addTodo = async (req,res) => {
   const id = req.id;
   const { task, description, status } = req.body;
   const newTodo = await new Todo({id: id , ...req.body}).save();
-  res.status(200).json({message: "Todo added successfully"});
+  res.status(200).json({message: "Todo added successfully", status: true});
 }
 
 

@@ -36,9 +36,9 @@ const handleSignup = async (e) => {
   }
 }
 
-console.log(signupData)
   return(
     <>
+    <div>Signup Page</div>
       <form onSubmit={handleSignup}>
         <input type="text"  placeholder="Name" onChange={(e) => setSignupData({...signupData, name: e.target.value})} />
         <input type="email" value={signupData.email} placeholder="Email" onChange={(e) => setSignupData({...signupData, email: e.target.value })} required />
@@ -47,8 +47,8 @@ console.log(signupData)
         <button type="submit">Sign Up</button>
       </form>
       <div>{response}</div>
-      {signupSuccess && (
-          <Link to="./login">Login Page</Link>
+      {signupSuccess && ( 
+          <Link to={'/login'}>Login Page</Link>
       )}
     </>
   )
