@@ -7,12 +7,13 @@ export default function Todos() {
   const [todoData, setTodoData] = useState({
     task: "",
     description: "",
-    status: ""
+    status: false
   })
   const [addTodoStatus, setAddTodoStatus] = useState(false)
   const [addTodoResponse, setAddTodoResponse] = useState("")
   const [todoList,setTodoList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [taskDone, setTaskDone] = useState({})
 
   async function getTodosList() {
     setAddTodoStatus(false)
@@ -69,6 +70,32 @@ export default function Todos() {
     navigate('/login')
   }
 
+  const handleDone = async (e,currTaskId) => {
+    e.preventDefault()
+    console.log(currTaskId)
+    // setTaskDone({taskId: currTaskId});
+    // console.log(taskDone);
+    try{
+      const req = await fetch(`http://localhost:3000/todoG/home/done/${currTaskId}`,{
+        method: "POST",
+        headers: {
+          "Content-Type" : "applicaton/json",
+          "Accept": "application/json",
+          "Authorization": localStorage.getItem("todoUserToken")
+        },
+
+      } )
+      const res = await req.json();
+      console.log(res)
+      
+    }
+    catch(error) {
+      console.log(error)
+    }
+    window.location.reload();
+    
+  }
+
   return(
     <>
       <div>Todos Page</div>
@@ -76,7 +103,7 @@ export default function Todos() {
       <form onSubmit={handleAddTodo}>
         <input type="text" placeholder="Task" onChange={(e) => {setTodoData({...todoData, task: e.target.value})}} />
         <input type="text" placeholder="Description" onChange={(e) => {setTodoData({...todoData, description: e.target.value})}}  />
-        <input type="text" onChange={(e) => {setTodoData({...todoData, status: e.target.value})}} placeholder="status" />
+        {/* <input type="text" onChange={(e) => {setTodoData({...todoData, status: e.target.value})}} placeholder="status" />  */}
         <button type="submit">Add todo</button>
       </form>
       {addTodoStatus && (
@@ -86,8 +113,10 @@ export default function Todos() {
       {!loading && (
         todoList.map((t) => (
           <div key={t._id}>
+            <div>{t._id}</div>
             <div>{t.task}</div>
             <div>{t.description}</div>
+            <button onClick={(e) => handleDone(e,t._id)}>Done</button>
           </div>
         ))
       )}

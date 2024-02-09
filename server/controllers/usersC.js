@@ -85,15 +85,35 @@ function authenticateJWT (req, res, next) {
 }
 
 const addTodo = async (req,res) => {
+  console.log(req.body)
   const id = req.id;
+  console.log(req.body)
   const { task, description, status } = req.body;
   const newTodo = await new Todo({id: id , ...req.body}).save();
   res.status(200).json({message: "Todo added successfully", status: true});
 }
 
+const deleteTodo = async (req,res,next) => {
+  const { taskId } = req.params; 
+  console.log(taskId)
+
+
+  Todo.findOneAndDelete({ _id: taskId })
+    .then((task) => {
+      next();
+    })
+    .catch((error) => {
+      console.error("Error finding task:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    });
+
+
+}
+
 
 const userTodos = async (req, res) => {
   const id = req.id;
+  console.log(id)
   const todoList = await Todo.find({id: id});
   
   res.send(todoList)
@@ -104,5 +124,6 @@ module.exports = {
   signup,
   userTodos,
   authenticateJWT,
-  addTodo
+  addTodo,
+  deleteTodo
 };
