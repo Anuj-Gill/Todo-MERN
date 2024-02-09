@@ -83,7 +83,7 @@ export default function Todos() {
           "Accept": "application/json",
           "Authorization": localStorage.getItem("todoUserToken")
         },
-
+        body: JSON.stringify({taskId: currTaskId})
       } )
       const res = await req.json();
       console.log(res)
@@ -92,7 +92,7 @@ export default function Todos() {
     catch(error) {
       console.log(error)
     }
-    window.location.reload();
+    // window.location.reload();
     
   }
 

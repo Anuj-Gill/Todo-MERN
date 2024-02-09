@@ -94,18 +94,24 @@ const addTodo = async (req,res) => {
 }
 
 const deleteTodo = async (req,res,next) => {
-  const { taskId } = req.params; 
-  console.log(taskId)
+  
+  try{
+    console.log(req.body)
+    const { taskId } = req.body; 
+    console.log(taskId)
+    Todo.findOneAndDelete({ _id: taskId })
+      .then((task) => {
+        console.log("task deleted")
+      })
+      .catch((error) => {
+        console.error("Error finding task:", error);
+        res.json({ message: "Internal Server Error" });
+      });
+  }
+  catch(error) {
+    console.log(error)
+  }
 
-
-  Todo.findOneAndDelete({ _id: taskId })
-    .then((task) => {
-      next();
-    })
-    .catch((error) => {
-      console.error("Error finding task:", error);
-      res.status(500).json({ message: "Internal Server Error" });
-    });
 
 
 }
