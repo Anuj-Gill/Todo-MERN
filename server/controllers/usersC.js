@@ -98,9 +98,8 @@ const addTodo = async (req, res) => {
 const deleteTodo = async (req, res, next) => {
 
   try {
-
     const { taskId } = req.body;
-    console.log(taskId)
+    console.log(req.body)
     Todo.findOneAndDelete({ _id: taskId })
       .then((task) => {
         console.log("task deleted")
@@ -116,8 +115,6 @@ const deleteTodo = async (req, res, next) => {
     console.log(error)
   }
 
-
-
 }
 
 
@@ -125,7 +122,6 @@ const userTodos = async (req, res) => {
   const id = req.id;
   console.log(id)
   const todoList = await Todo.find({ id: id });
-
   res.status(200).send(todoList)
 };
 
