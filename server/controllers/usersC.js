@@ -95,19 +95,19 @@ const addTodo = async (req, res) => {
   res.status(200).json({ message: "Todo added successfully", status: true });
 }
 
-const deleteTodo = async (req, res, next) => {
+const deleteTodo = async (req, res) => {
 
   try {
     const { taskId } = req.body;
     console.log(req.body)
     Todo.findOneAndDelete({ _id: taskId })
       .then((task) => {
-        console.log("task deleted")
-        next()
+        console.log("Task completed successfully!")
+        res.status(200).json({message: "Task completed successfully!", status: true})
       })
       .catch((error) => {
         console.error("Error finding task:", error);
-        res.json({ message: "Internal Server Error" });
+        res.json({ message: "Internal Server Error",status: false});
       });
 
   }

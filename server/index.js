@@ -15,6 +15,6 @@ app.post('/todoG/login', login);
 app.post('/todoG/signup', signup);
 app.post('/todoG/home', authenticateJWT, addTodo)
 app.get('/todoG/home', authenticateJWT, userTodos)
-app.post('/todoG/home/done', authenticateJWT, deleteTodo, userTodos)
+app.post('/todoG/home/done', authenticateJWT, deleteTodo)
 
 app.listen(3000)

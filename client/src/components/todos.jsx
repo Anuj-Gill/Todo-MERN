@@ -12,11 +12,10 @@ export default function Todos() {
   const [addTodoResponse, setAddTodoResponse] = useState("");
   const [todoList, setTodoList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [taskDone, setTaskDone] = useState({});
 
   async function getTodosList() {
     setAddTodoStatus(false);
-    console.log("inside get todo");
+    // console.log("inside get todo");
     try {
       const fetchTodos = async () => {
         const reqT = await fetch("http://localhost:3000/todoG/home", {
@@ -28,7 +27,7 @@ export default function Todos() {
           },
         });
         const resT = await reqT.json();
-        console.log(resT);
+        // console.log(resT);
         setTodoList(resT);
       };
       fetchTodos();
@@ -39,8 +38,8 @@ export default function Todos() {
   useEffect(() => {
     getTodosList().finally(() => setLoading(false));
   }, [addTodoStatus]);
-  console.log(todoList);
 
+ 
   const handleAddTodo = async (e) => {
     e.preventDefault();
     try {
@@ -56,7 +55,7 @@ export default function Todos() {
       const res = await req.json();
       setAddTodoStatus(res.status);
       setAddTodoResponse(res.message);
-      console.log(res);
+      // console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -67,11 +66,8 @@ export default function Todos() {
     navigate("/login");
   }
 
-  const handleDone = async (e, currTaskId) => {
+  const handleDone = async (e, currTaskId, currTask) => {
     e.preventDefault();
-    console.log(currTaskId);
-    // setTaskDone({taskId: currTaskId});
-    // console.log(taskDone);
     try {
       const req = await fetch(
         `http://localhost:3000/todoG/home/done`,
@@ -85,12 +81,20 @@ export default function Todos() {
           body: JSON.stringify({ taskId: currTaskId }),
         }
       );
-      const res = await req.json();
-      console.log(res);
+      const res = await req.json()
+      console.log(todoList)
+      
+      if(res.status){
+        const updatedTodoList = todoList.filter((obj) => obj._id !== currTaskId);
+        setTodoList(updatedTodoList);
+        // console.log(todoList)
+
+        // console.log('list updated')
+      }
     } catch (error) {
       console.log(error);
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
@@ -112,7 +116,6 @@ export default function Todos() {
             setTodoData({ ...todoData, description: e.target.value });
           }}
         />
-        {/* <input type="text" onChange={(e) => {setTodoData({...todoData, status: e.target.value})}} placeholder="status" />  */}
         <button type="submit">Add todo</button>
       </form>
       {addTodoStatus && <div>{addTodoResponse}</div>}
@@ -120,10 +123,9 @@ export default function Todos() {
       {!loading &&
         todoList.map((t) => (
           <div key={t._id}>
-            <div>{t._id}</div>
             <div>{t.task}</div>
             <div>{t.description}</div>
-            <button onClick={(e) => handleDone(e, t._id)}>Done</button>
+            <button onClick={(e) => handleDone(e, t._id, t.task)}>Done</button>
           </div>
         ))}
     </>
